@@ -15,7 +15,9 @@
 
 ### Выполнение.
 Для выполнения ДЗ было создано 2 ВМ.
+
     ВМ1 - ОС - RED ОS 7.3.4, IP 192.168.122.200. На данной ВМ развернут CMS - WordPress на базе NGINX,php-fpm 8.1, postgresql 14.11
+
     ВМ2 - ОС - RED ОS 8.1, IP 192.168.122.253. На данной ВМ развернут Prometheus server и Grafana.
 
 #### 1. Установка и настройка exporters на ВМ1.
@@ -198,7 +200,7 @@ less /etc/prometheus/prometheus.yml
                   - source_labels: [__param_target]
                     target_label: instance
 
-
+### Настройка доступа только по одному одному порту  и добавление авторизации.
 
 
 

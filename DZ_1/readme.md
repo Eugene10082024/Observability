@@ -39,11 +39,12 @@ less /etc/systemd/system/node_exporter.service
             [Install]
             WantedBy=multi-user.target
     
-    less /etc/default/node_exporter
-        OPTIONS=''
+less /etc/default/node_exporter
+            OPTIONS=''
 
 2. Postgres-exporter
-    less /etc/systemd/system/postgres-exporter.service
+less /etc/systemd/system/postgres-exporter.service
+
         [Unit]
         Description=Prometheus PostgreSQL Exporter
         After=network.target
@@ -59,7 +60,7 @@ less /etc/systemd/system/node_exporter.service
         [Install]
         WantedBy=multi-user.target
 
-3. Nginx-exporter
+4. Nginx-exporter
    
         [Unit]
         Description=NGINX Prometheus Exporter

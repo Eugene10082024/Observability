@@ -40,6 +40,7 @@ less /etc/systemd/system/node_exporter.service
             WantedBy=multi-user.target
     
 less /etc/default/node_exporter
+            
             OPTIONS=''
 
 2. Postgres-exporter

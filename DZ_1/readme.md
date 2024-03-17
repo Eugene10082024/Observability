@@ -15,8 +15,8 @@
 
 ### Выполнение.
 Для выполнения ДЗ было создано 2 ВМ.
-    ВМ 1 - ОС - RED ОS 7.3.4, IP 192.168.122.200. На данной ВМ развернут CMS - WordPress на базе NGINX,php-fpm 8.1, postgresql 14.11
-    ВМ 2 - ОС - RED ОS 8.1, IP 192.168.122.253. На данной ВМ развернут Prometheus server и Grafana.
+    ВМ1 - ОС - RED ОS 7.3.4, IP 192.168.122.200. На данной ВМ развернут CMS - WordPress на базе NGINX,php-fpm 8.1, postgresql 14.11
+    ВМ2 - ОС - RED ОS 8.1, IP 192.168.122.253. На данной ВМ развернут Prometheus server и Grafana.
 
 #### 1. Установка и настройка exporters на ВМ1.
 На ВМ1 были разверуты следущие exporters:
@@ -85,6 +85,22 @@ less /etc/systemd/system/nginx-prometheus-exporter.service
             [Install]
             WantedBy=multi-user.target
 
+less /etc/default/nginx-prometheus-exporter
+
+            ARGS=""
+
+Для получения метрик с nginx в конфигурационный файл /etc/nginx/nginx/conf добавил:
+
+            server {
+            listen 8080;
+            server_name _;
+            location /stub_status {
+                stub_status on;
+                allow 127.0.0.1;
+                deny all;
+            }
+         }
+
 1.4. php-fpm_exporter
 
 less /etc/systemd/system/php-exporter.service
@@ -131,6 +147,51 @@ less /etc/systemd/system/blackbox-exporter.service
             WantedBy=multi-user.target
 
 
+#### 2. Настройка Prometheus server на ВМ2 
+
+less /etc/prometheus/prometheus.yml
+
+            global:
+              scrape_interval: 15s 
+              evaluation_interval: 15s 
+            alerting:
+              alertmanagers:
+                - static_configs:
+                    - targets:
+            rule_files:
+            scrape_configs:
+              - job_name: "prometheus"
+                static_configs:
+                  - targets: ["localhost:9090"]
+              - job_name: "postgres_exporter"
+                scrape_interval: 5s
+                static_configs:
+                  - targets: ["192.168.122.200:9187"]
+              - job_name: "node_exporter"
+                scrape_interval: 5s
+                static_configs:
+                  - targets: ["192.168.122.200:9100"]
+              - job_name: "nginx_exporter"
+                scrape_interval: 5s
+                static_configs:
+                  - targets: ["192.168.122.200:9113"]
+              - job_name: "php-fpm_exporter"
+                scrape_interval: 5s
+                static_configs:
+                  - targets: ["192.168.122.200:9253"]
+              - job_name: 'blackbox'
+                scrape_interval: 5s
+                metrics_path: /probe
+                params:
+                  module: [http_2xx]
+                static_configs:
+                  - targets:
+                    - http://redos_wordpress
+                relabel_configs:
+                  - source_labels: [__address__]
+                    target_label: __param_target
+                  - source_labels: [__param_target]
+                    target_label: instance
 
 
 

@@ -20,6 +20,79 @@
 
 #### Установка и настройка exporters на ВМ1.
 На ВМ1 были разверуты следущие exporters:
-    1. Node_exporter
-        
+    1. Node-exporter
+      less /etc/systemd/system/node_exporter.service 
+            [Unit]
+            Description=Prometheus Node Exporter
+            Documentation=https://github.com/prometheus/node_exporter
+            After=network-online.target
+            
+            [Service]
+            User=node_exporter
+            Group=node_exporter
+            EnvironmentFile=/etc/default/node_exporter
+            ExecStart=/usr/bin/node_exporter $OPTIONS
+            Restart=on-failure
+            RestartSec=5
+            
+            [Install]
+            WantedBy=multi-user.target
+    
+    less /etc/default/node_exporter
+        OPTIONS=''
 
+2. Postgres-exporter
+    less /etc/systemd/system/postgres-exporter.service
+        [Unit]
+        Description=Prometheus PostgreSQL Exporter
+        After=network.target
+        
+        [Service]
+        Type=simple
+        Restart=always
+        User=postgres
+        Group=postgres
+        Environment=DATA_SOURCE_NAME="postgresql://postgresql_exporter:Qwerty12@localhost/postgres?sslmode=disable"
+        ExecStart=/usr/bin/postgres_exporter --web.listen-address="localhost:9187"
+        
+        [Install]
+        WantedBy=multi-user.target
+
+3. Nginx-exporter
+   
+        [Unit]
+        Description=NGINX Prometheus Exporter
+        Documentation=https://github.com/nginxinc/nginx-prometheus-exporter
+        After=network-online.target nginx.service
+        Wants=network-online.target
+        
+        [Service]
+        #Restart=always
+        User=prometheus
+        EnvironmentFile=/etc/default/nginx-prometheus-exporter
+        ExecStart=/usr/bin/nginx-prometheus-exporter $ARGS
+        
+        #ExecStart=/usr/bin/nginx-prometheus-exporter --nginx.scrape-uri="http://127.0.0.1:80/stub_status" 
+        
+        ExecReload=/bin/kill -HUP $MAINPID
+        
+        #TimeoutStopSec=20s
+        #SendSIGKILL=no
+        
+        [Install]
+        WantedBy=multi-user.target
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

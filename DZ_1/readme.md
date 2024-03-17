@@ -18,9 +18,9 @@
     ВМ 1 - ОС - RED ОS 7.3.4, IP 192.168.122.200. На данной ВМ развернут CMS - WordPress на базе NGINX,php-fpm 8.1, postgresql 14.11
     ВМ 2 - ОС - RED ОS 8.1, IP 192.168.122.253. На данной ВМ развернут Prometheus server и Grafana.
 
-#### Установка и настройка exporters на ВМ1.
+#### 1. Установка и настройка exporters на ВМ1.
 На ВМ1 были разверуты следущие exporters:
-1. Node-exporter
+1.1. Node-exporter
 less /etc/systemd/system/node_exporter.service 
     
             [Unit]
@@ -43,49 +43,92 @@ less /etc/default/node_exporter
             
             OPTIONS=''
 
-2. Postgres-exporter
+1.2. Postgres-exporter
    
 less /etc/systemd/system/postgres-exporter.service
 
-        [Unit]
-        Description=Prometheus PostgreSQL Exporter
-        After=network.target
-        
-        [Service]
-        Type=simple
-        Restart=always
-        User=postgres
-        Group=postgres
-        Environment=DATA_SOURCE_NAME="postgresql://postgresql_exporter:Qwerty12@localhost/postgres?sslmode=disable"
-        ExecStart=/usr/bin/postgres_exporter --web.listen-address="localhost:9187"
-        
-        [Install]
-        WantedBy=multi-user.target
+            [Unit]
+            Description=Prometheus PostgreSQL Exporter
+            After=network.target
+            
+            [Service]
+            Type=simple
+            Restart=always
+            User=postgres
+            Group=postgres
+            Environment=DATA_SOURCE_NAME="postgresql://postgresql_exporter:Qwerty12@localhost/postgres?sslmode=disable"
+            ExecStart=/usr/bin/postgres_exporter --web.listen-address="localhost:9187"
+            
+            [Install]
+            WantedBy=multi-user.target
 
-4. Nginx-exporter
+1.3. Nginx-exporter
 
 less /etc/systemd/system/nginx-prometheus-exporter.service
    
-        [Unit]
-        Description=NGINX Prometheus Exporter
-        Documentation=https://github.com/nginxinc/nginx-prometheus-exporter
-        After=network-online.target nginx.service
-        Wants=network-online.target
-        
-        [Service]
-        #Restart=always
-        User=prometheus
-        EnvironmentFile=/etc/default/nginx-prometheus-exporter
-        ExecStart=/usr/bin/nginx-prometheus-exporter $ARGS
-        ExecReload=/bin/kill -HUP $MAINPID
-        
-        #TimeoutStopSec=20s
-        #SendSIGKILL=no
-        
-        [Install]
-        WantedBy=multi-user.target
+            [Unit]
+            Description=NGINX Prometheus Exporter
+            Documentation=https://github.com/nginxinc/nginx-prometheus-exporter
+            After=network-online.target nginx.service
+            Wants=network-online.target
+            
+            [Service]
+            #Restart=always
+            User=prometheus
+            EnvironmentFile=/etc/default/nginx-prometheus-exporter
+            ExecStart=/usr/bin/nginx-prometheus-exporter $ARGS
+            ExecReload=/bin/kill -HUP $MAINPID
+            
+            #TimeoutStopSec=20s
+            #SendSIGKILL=no
+            
+            [Install]
+            WantedBy=multi-user.target
 
+1.4. php-fpm_exporter
 
+less /etc/systemd/system/php-exporter.service
+
+            [Unit]
+            Description=PHP Exporter
+            After=network.target
+            [Service]
+            User=php_exporter
+            Group=php_exporter
+            Type=simple
+            Restart=always
+            RestartSec=500ms
+            
+            ExecStart=/usr/bin/php-fpm_exporter server –phpfpm.scrape-uri «unix:///var/run/php-fpm/www.sock:/status-php-back» --web.listen-address="localhost:9253"
+            SyslogIdentifier=php-exporter
+            
+            StandardOutput=syslog
+            StandardError=syslog
+            SyslogIdentifier=php-exporter
+            
+            [Install]
+            WantedBy=multi-user.target
+
+1.5. blackbox-exporter
+
+less /etc/systemd/system/blackbox-exporter.service
+
+            [Unit]
+            Description=Blackbox Exporter Service
+            Wants=network-online.target
+            After=network-online.target
+            
+            [Service]
+            Type=simple
+            User=user_blackbox
+            Group=user_blackbox
+            ExecStart=/usr/bin/blackbox_exporter \
+              --config.file=/etc/blackbox/blackbox.yml \
+              --web.listen-address="0.0.0.0:9115"
+            Restart=always
+            
+            [Install]
+            WantedBy=multi-user.target
 
 
 

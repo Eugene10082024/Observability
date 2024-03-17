@@ -163,22 +163,27 @@ less /etc/prometheus/prometheus.yml
               - job_name: "prometheus"
                 static_configs:
                   - targets: ["localhost:9090"]
+                  
               - job_name: "postgres_exporter"
                 scrape_interval: 5s
                 static_configs:
                   - targets: ["192.168.122.200:9187"]
+                  
               - job_name: "node_exporter"
                 scrape_interval: 5s
                 static_configs:
                   - targets: ["192.168.122.200:9100"]
+                  
               - job_name: "nginx_exporter"
                 scrape_interval: 5s
                 static_configs:
                   - targets: ["192.168.122.200:9113"]
+                  
               - job_name: "php-fpm_exporter"
                 scrape_interval: 5s
                 static_configs:
                   - targets: ["192.168.122.200:9253"]
+                  
               - job_name: 'blackbox'
                 scrape_interval: 5s
                 metrics_path: /probe

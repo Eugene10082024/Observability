@@ -63,6 +63,8 @@ less /etc/systemd/system/postgres-exporter.service
         WantedBy=multi-user.target
 
 4. Nginx-exporter
+
+less /etc/systemd/system/nginx-prometheus-exporter.service
    
         [Unit]
         Description=NGINX Prometheus Exporter
@@ -75,9 +77,6 @@ less /etc/systemd/system/postgres-exporter.service
         User=prometheus
         EnvironmentFile=/etc/default/nginx-prometheus-exporter
         ExecStart=/usr/bin/nginx-prometheus-exporter $ARGS
-        
-        #ExecStart=/usr/bin/nginx-prometheus-exporter --nginx.scrape-uri="http://127.0.0.1:80/stub_status" 
-        
         ExecReload=/bin/kill -HUP $MAINPID
         
         #TimeoutStopSec=20s

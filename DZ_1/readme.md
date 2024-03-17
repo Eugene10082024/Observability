@@ -20,8 +20,11 @@
 
 #### Установка и настройка exporters на ВМ1.
 На ВМ1 были разверуты следущие exporters:
+
     1. Node-exporter
+    
       less /etc/systemd/system/node_exporter.service 
+    
             [Unit]
             Description=Prometheus Node Exporter
             Documentation=https://github.com/prometheus/node_exporter

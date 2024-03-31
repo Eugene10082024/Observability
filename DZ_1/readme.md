@@ -287,7 +287,7 @@ less .htpasswd
 
 #### Настройка exporters для передачи метрик.
 
-#### NODE_EXPORTER:
+##### NODE_EXPORTER:
 
 vi /etc/systemd/system/node_exporter.service
 
@@ -312,7 +312,7 @@ vi /etc/default/node_exporter
 
         OPTIONS = --web.listen-address=localhost:9100  --web.config.file=/etc/node_exporter/config.yml
 
-#### POSTGRES-EXPORTER
+##### POSTGRES-EXPORTER
 
 vi /etc/systemd/system/postgres-exporter.service
         [Unit]

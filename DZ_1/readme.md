@@ -335,7 +335,7 @@ vi /etc/default/postgres_exporter
 
         OPTIONS = --web.listen-address=localhost:9187  --web.config.file=/etc/postgres_exporter/config.yml
         
-#### NGINX-PROMETHEUS-EXPORTER
+##### NGINX-PROMETHEUS-EXPORTER
 
 vi /etc/systemd/system/nginx-prometheus-exporter.service
 
@@ -363,7 +363,7 @@ vi /etc/default/nginx_exporter
 
         OPTIONS = --web.listen-address="localhost:9113" --web.config.file=/etc/nginx_exporter/config.yml
 
-#### PHP-FPM_EXPORTER
+##### PHP-FPM_EXPORTER
 
 vi /etc/systemd/system/php-exporter.service
 
@@ -388,7 +388,7 @@ vi /etc/systemd/system/php-exporter.service
         [Install]
         WantedBy=multi-user.target
 
-#### BLACKBOX-EXPORTER
+##### BLACKBOX-EXPORTER
 
 vi /etc/blackbox/blackbox.yml
 

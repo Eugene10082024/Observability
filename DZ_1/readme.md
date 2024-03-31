@@ -2,7 +2,6 @@
 ### Установка и настройка Prometheus, использование exporters
 #### Цель:
 Установить и настроить Prometheus.
-Результатом выполнения данного ДЗ будет являться публичный репозиторий, в системе контроля версий (Github, Gitlab, etc.), в котором будет находиться Readme с описанием выполненых действий.
 
 #### Описание ДЗ:
 На виртуальной машине установите любую open source CMS, которая включает в себя следующие компоненты: nginx, php-fpm, database (MySQL or Postgresql)
@@ -201,6 +200,7 @@ less /etc/prometheus/prometheus.yml
                     target_label: __param_target
                   - source_labels: [__param_target]
                     target_label: instance
+
 
 ### Настройка доступа только по одному одному порту  и добавление авторизации.
 
@@ -444,12 +444,6 @@ vi /etc/blackbox/blackbox.yml
             icmp:
               ttl: 5
         
-
-
-
-
-
-
 #### Настройка базовой авторизации в prometheus.conf
         - job_name: "postgres_exporter"
         scrape_interval: 5s

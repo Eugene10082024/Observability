@@ -22,7 +22,9 @@
 
 #### 1. Установка и настройка exporters на ВМ1.
 На ВМ1 были разверуты следущие exporters:
+
 1.1. Node-exporter
+
 less /etc/systemd/system/node_exporter.service 
     
             [Unit]
@@ -202,9 +204,76 @@ less /etc/prometheus/prometheus.yml
 
 ### Настройка доступа только по одному одному порту  и добавление авторизации.
 
+1. Выполним настройку поллучения metric через nginx по порту 80. Nginx буду использовать в качестве реверс-прокси.
+
+2. Для авторизации используем следующие УЗ:
+   
+        node_exporter:
+              username: auth_user
+              password: "12345678"
+        
+        postgres_exporter
+              username: auth_user_postgres
+              password: "87654321"
+        blackbox
+            username: auth_user_blackbox
+            password: Zaqwsx@12
+        
+        nginx_exporter
+            username: auth_user_nginx
+            password: Xswqaz@12
+        
+        php-fpm_exporter
+            username: auth_user_php
+            password: Qwerty@12
+
+
+Конфигурационный файл nginx как реверс проки + включение авторизации.
+
+/etc/nginx/nginx.conf 
+
+       server {
+                listen       80 default_server;
+                listen       [::]:80 default_server;
+                server_name  _;
+                root         /usr/share/nginx/html;
+
+                # Load configuration files for the default server block.
+                include /etc/nginx/default.d/*.conf;
+
+                error_page 404 /404.html;
+                location = /404.html {
+                }
+
+                error_page 500 502 503 504 /50x.html;
+                location = /50x.html {
+                }
+                
+                auth_basic      "Exporters area";
+                auth_basic_user_file /etc/nginx/.htpasswd;
 
 
 
+                location /node-exporter {
+                proxy_pass http://localhost:9100/metrics;
+            }
+
+            location /postgres-exporter {
+                proxy_pass http://localhost:9187/metrics;
+            }
+
+            location /nginx-exporter {
+                proxy_pass http://localhost:9113/metrics;
+            }
+
+            location /php-fpm-exporter {
+                proxy_pass http://localhost:9253/metrics;
+            }
+
+            location /blackbox-exporter {
+                proxy_pass http://localhost:9115/metrics;
+            }
+    }
 
 
 
